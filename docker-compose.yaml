@@ -1,0 +1,18 @@
+version: "3"
+services:
+  pdb:
+    env_file:
+      - db.env
+    image: postgres:latest
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+
+  nimb-app:
+    env_file:
+      - app.env
+    build: .
+    ports:
+      - "8000:5000"
+    depends_on:
+      - pdb
