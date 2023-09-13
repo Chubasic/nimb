@@ -8,11 +8,21 @@ services:
     ports:
       - "5432:5432"
 
+  celery-redis:
+    build:
+      context: ./redis-docker
+      dockerfile: Dockerfile
+    container_name: celery-redis
+    ports:
+      - "6379:6379"
+
   nimb-app:
     env_file:
       - app.env
     build: .
     ports:
-      - "8000:5000"
+      - "5000:5000"
+    init: true
     depends_on:
       - pdb
+      - celery-redis
