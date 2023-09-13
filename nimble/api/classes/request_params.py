@@ -42,3 +42,6 @@ class RequestParams(DataClassJsonMixin):
         """
         default = self.__dict__
         return dict_skip_none(default)
+
+
+request_params_schema = RequestParams.schema()

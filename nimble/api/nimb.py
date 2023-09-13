@@ -5,13 +5,16 @@ from urllib.parse import urljoin
 from os import environ
 import requests
 from urllib import parse
+
+from requests import Timeout
+
 from .classes.errors import (
     NotFoundError,
     ValidationError,
     QuotaError,
     ServerError,
     Unauthorized,
-    Unsupported
+    Unsupported, NimbleError
 )
 from .classes.request_params import RequestParams
 
@@ -43,18 +46,24 @@ def fetch(endpoint: str, params: RequestParams):
             print("Request path", response.request.url)
             if response.status_code == 200:
                 return response.json()
-        
+
             response.raise_for_status()
         except requests.exceptions.RequestException as req_err:
-            print("Unable fetch data from Nimb API, on route %s \n", endpoint)
+            print(f"Unable fetch data from Nimb API, on route {endpoint}")
+            if isinstance(req_err, Timeout):
+                print(req_err)
+                return NimbleError.schema().load({
+                    'message': 'Service is unavaliable',
+                    'code': 0
+                })
             print("Status code", req_err.response.status_code)
+            error_body = req_err.response.json()
             match req_err.response.status_code:
                 case 404:
-                    return NotFoundError.schema().load(req_err.response.json())
+                    return NotFoundError.schema().load(error_body)
                 case 403 | 401:
-                    return Unauthorized.schema().load(req_err.response.json())
+                    return Unauthorized.schema().load(error_body)
             
-            error_body = req_err.response.json()
             match error_body.get("code"):
                 case ValidationError.code:
                     return ValidationError.schema().load(error_body)
@@ -67,6 +76,6 @@ def fetch(endpoint: str, params: RequestParams):
                 
                 case _:
                     print("Unsupported")
-                    return Unsupported().to_dict()
+                    return Unsupported()
 
             

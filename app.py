@@ -8,8 +8,8 @@ from glob import glob
 from datetime import datetime
 from flask import make_response, jsonify
 from app_factory import create_app
-from nimble.api.classes.contact import Contact
-from nimble.api.classes.response import ResponseResources, ResponseFields
+from nimble.api.classes.contact import Contact, contact_schema
+from nimble.api.classes.response import response_fields_schema
 from nimble.api.nimb import fetch
 from nimble.api.classes.request_params import RequestParams
 
@@ -27,7 +27,6 @@ def search():
 
     params = RequestParams(
         fields=["first name", "last name", "email", "description"],
-        # fields=["email", "description"],
         tags=0,
         per_page=20,
         page=1,
@@ -35,16 +34,11 @@ def search():
         record_type="person",
         query=None,
     )
-    print(params.to_dict_safe())
     resposne = fetch("contacts", params=params)
-    rec = resposne.get("resources")
-    # print(rec[0])
-    # cont = Contact.schema().load(rec[0].get('fields'))
-    # res = ResponseFields.schema().load(rec, many=True)
-    # print("res", res)
-    contact = Contact.schema().load(rec[0].get('fields'))
-
-    return make_response(jsonify({"response": contact.to_dict()}), 200)
+    resources = resposne.get("resources")
+    # Check how does it serialize that fast with recursion
+    res = response_fields_schema.load(resources, many=True)
+    return make_response(jsonify({"response": res}), 200)
 
 
 @app.route("/alive", methods=["GET"])

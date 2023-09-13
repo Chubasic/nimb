@@ -2,12 +2,13 @@
 Nimble domain tasks
 """
 import datetime
-
 from sqlalchemy import text
 from datetime import datetime
 from _celery import celery
+from celery import chain
 from ..api.classes.errors import ValidationError, QuotaError, NotFoundError, ServerError
 from ..api.classes.request_params import RequestParams
+from ..api.classes.response import response_fields_schema
 from ..api.nimb import fetch
 from db import engine as db_engine
 
@@ -20,22 +21,23 @@ def fetch_contacts():
     Returns:
         None: If an error occurs during the request.
     """
-
     path = "contacts"
     params = RequestParams(
         fields=["first name", "last name", "email", "description"],
         tags=0,
-        per_page=100,
+        per_page=20,
         page=1,
-        sort=('updated', 'desc'),
+        sort=("updated", "desc"),
         record_type="person",
-        query="",
+        query=None,
     )
     try:
-        print("Task:: fetch_contacts::running \n")
         resposne = fetch(path, params=params)
-        chain = testing_tasks.s(resposne)
-        chain.apply_async()
+        resources = resposne.get("resources")
+        # Check how does it serialize that fast with recursion
+        chain_res = chain(
+            serialize_data.s(resources) | insert_data.s())
+
     except (ValidationError, QuotaError, NotFoundError, ServerError) as err:
         print("Task:: fetch_contacts::failed \n")
         print(err.message)
@@ -43,7 +45,13 @@ def fetch_contacts():
 
 
 @celery.task
-def testing_tasks(resp):
+def serialize_data(data):
+    return response_fields_schema.load(data, many=True)
+
+
+
+@celery.task
+def insert_data(resp):
     print("Runin testing task", resp)
     user_query: str = """INSERT INTO users (
     first_name, last_name, email, description)
