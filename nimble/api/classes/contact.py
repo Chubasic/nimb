@@ -4,18 +4,18 @@ Describes Contact aka user in Nimble API response and locally in DB
 from dataclasses import dataclass, field
 from typing import List, Optional
 from dataclasses_json import (
-    DataClassJsonMixin,
-    Undefined,
-    LetterCase,
-    dataclass_json, config,
+    DataClassJsonMixin, config, dataclass_json, Undefined, LetterCase,
 )
 
 
 @dataclass
-# @dataclass_json(undefined=Undefined.EXCLUDE, letter_case=LetterCase.SNAKE)
 class Contact(DataClassJsonMixin):
-    first_name: List[dict] = field(metadata=config(field_name="first name"))
-    last_name: List[dict] = field(metadata=config(field_name="last name"))
+    first_name: List[dict] = field(
+        metadata=config(field_name="first name"))
+
+    last_name: List[dict] = field(
+        metadata=config(field_name="last name"))
+
     email: Optional[List[dict]] = None
     description: Optional[List[dict]] = None
     

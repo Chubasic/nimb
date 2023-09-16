@@ -1,16 +1,16 @@
 """ 
 Nimb API Request Params
 """
-
-from urllib import parse
-from typing import List, Union, Optional, Literal, Tuple
+from typing import List, Union, Optional, Literal, Tuple, LiteralString
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
-
 from utils.skip_none import dict_skip_none
 
 AllowedFieldsType = List[Literal["first name", "last name", "email", "description"]]
-SortFields = Tuple[Literal["updated"], Literal["asc", "desc"]]
+SortField = Literal["updated"]
+SortOrder = Literal["asc", "desc"]
+SortFields = Tuple[Union[SortField], Union[SortOrder]]
+RecordType = Literal["person"]
 
 
 @dataclass
@@ -25,12 +25,10 @@ class RequestParams(DataClassJsonMixin):
     sort: SortFields
     page: int = 1
     query: Optional[str] = None
-    record_type: Optional[Union["person"]] = None
+    record_type: Optional[Union[RecordType]] = None
 
     def __post_init__(self):
         self.sort: str = ":".join(map(str, self.sort))
-        print(self.sort)
-        # map(parse.quote, self.fields)
         self.fields: str = ",".join(map(str, self.fields))
 
     def to_dict_safe(self):

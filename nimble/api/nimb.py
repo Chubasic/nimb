@@ -17,6 +17,7 @@ from .classes.errors import (
     Unsupported, NimbleError
 )
 from .classes.request_params import RequestParams
+from .classes.response import response_contacts_schema
 
 BASE_URL = environ.get("NIMBLE_API_URI")
 TOKEN_PREFIX = "Bearer"
@@ -43,15 +44,15 @@ def fetch(endpoint: str, params: RequestParams):
                 },
                 timeout=10,
             )
-            print("Request path", response.request.url)
-            if response.status_code == 200:
-                return response.json()
-
             response.raise_for_status()
+
+            if response.status_code == 200:
+                # Check how does it serialize that fast with recursion
+                return response_contacts_schema.load(response.json())
+
         except requests.exceptions.RequestException as req_err:
             print(f"Unable fetch data from Nimb API, on route {endpoint}")
             if isinstance(req_err, Timeout):
-                print(req_err)
                 return NimbleError.schema().load({
                     'message': 'Service is unavaliable',
                     'code': 0
