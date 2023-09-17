@@ -26,7 +26,7 @@ def build_engine():
             port=5432,
         )
         return create_engine(connction_url)
-    # pylint: disable=broad-exception-caught
+
     except exc.OperationalError as err:
         print("OperationalError: ", err)
         return None
