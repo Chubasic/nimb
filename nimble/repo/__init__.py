@@ -177,8 +177,8 @@ class Repository:
         if result:
             rows = result.all()
             return list(map(lambda r: r._asdict(), rows))
-        else:
-            return []
+
+        return []
 
     def delete(self):
         """

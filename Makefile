@@ -11,3 +11,6 @@ run:
 
 stop:
 	docker compose down
+
+test:
+	pytest

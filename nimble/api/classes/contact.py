@@ -1,6 +1,7 @@
 """
 Describes Contact aka user in Nimble API response and locally in DB 
 """
+
 from dataclasses import dataclass, field
 from typing import List, Optional
 from dataclasses_json import (
@@ -9,15 +10,26 @@ from dataclasses_json import (
 )
 
 
+# pylint disable=missing-function-docstring
+def default_factory():
+    return [{"value": "No data"}]
+
+
 @dataclass
 class Contact(DataClassJsonMixin):
     """
     Representation of Nimble API response in resources[fields].
     """
 
-    first_name: List[dict] = field(metadata=config(field_name="first name"))
+    first_name: List[dict] = field(
+        metadata=config(field_name="first name"),
+        default_factory=default_factory,
+    )
 
-    last_name: List[dict] = field(metadata=config(field_name="last name"))
+    last_name: List[dict] = field(
+        metadata=config(field_name="last name"),
+        default_factory=default_factory,
+    )
 
     email: Optional[List[dict]] = None
     description: Optional[List[dict]] = None
