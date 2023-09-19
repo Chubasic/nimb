@@ -34,5 +34,5 @@ VOLUME /var/log
 EXPOSE 5000 5672 15672
 
 RUN printenv | grep -v "no_proxy" >> /etc/environment
-# CMD ["/usr/bin/supervisord"]
-CMD ["python", "-u", "app.py"]
+CMD ["/usr/bin/supervisord"]
+# CMD ["python", "-u", "app.py"]

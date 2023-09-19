@@ -14,15 +14,17 @@ class NimbleError(Exception):
     code = 0
     message: str
     nimble_code: int = field(metadata=config(field_name="code"))
-    error_messages: Optional[dict] = field(metadata=config(field_name="errors")) 
 
 
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
 class ValidationError(NimbleError):
     """ 
     Sent on invalid parameters. 
     Returns with HTTP code 409 and code field equal to 245.
     """
     code = 245
+    error_messages: Optional[dict] = field(metadata=config(field_name="errors" ))
     
     
 class QuotaError(NimbleError):
@@ -60,5 +62,4 @@ class NotFoundError(Exception, DataClassJsonMixin):
 
 class Unsupported(Exception, DataClassJsonMixin):
     message: "Unsupported response error"
-
 
