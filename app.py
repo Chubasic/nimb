@@ -8,9 +8,8 @@ from glob import glob
 from datetime import datetime
 from flask import make_response, jsonify, request
 from app_factory import create_app
-from nimble.repo import Repository
+from nimble.repo.contact_repo import ContactRepo
 from nimble.constants import CLIENT_SEARCH_FIELDS
-from db import engine as db_engine
 
 SEED_PATH = "./db/seeds/seed_*.py"
 MIGRATION_PATH = "./db/migrations/migration_*.py"
@@ -35,8 +34,10 @@ def search():
     search_query = request.args.get("search")
     if not search_query:
         return make_response(jsonify({"response": "No search query"}), 400)
-    result = Repository(db_engine, "users").search(search_query, CLIENT_SEARCH_FIELDS)
-    return make_response(jsonify({"response": result}), 200)
+    search_fields = list(CLIENT_SEARCH_FIELDS.values())
+    result = ContactRepo().search(search_query, search_fields)
+
+    return make_response(jsonify({"results": result}), 200)
 
 
 @app.route("/alive", methods=["GET"])

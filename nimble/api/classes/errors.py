@@ -1,3 +1,6 @@
+"""
+Error classes that are raised by Nimble API
+"""
 from typing import Optional
 from dataclasses import dataclass, field
 from dataclasses_json import DataClassJsonMixin, config, Undefined, dataclass_json

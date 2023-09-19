@@ -43,7 +43,8 @@ def create_seeds_table(engine: Engine):
     query: str = """
     CREATE TABLE IF NOT EXISTS seeds (
         id uuid DEFAULT uuid_generate_v4() PRIMARY KEY, 
-        seed_name varchar(255) NOT NULL UNIQUE, created_at timestamp NOT NULL DEFAULT current_timestamp
+        seed_name varchar(255) NOT NULL UNIQUE,
+        created_at timestamp NOT NULL DEFAULT current_timestamp
     );
     """
     return create_db_table(engine, query)
@@ -66,7 +67,7 @@ def create_user_table(engine: Engine):
 	        last_name varchar(45) NOT NULL, 
 	        email varchar(254) NOT NULL UNIQUE, 
 	        description varchar(500),
-	        created_at timestamp NOT NULL DEFAULT current_timestamp
+	        created_at timestamp NOT NULL DEFAULT current_timestamp,
 	        updated_at timestamp NOT NULL DEFAULT current_timestamp
         ); 
             """
@@ -86,7 +87,8 @@ def create_migrations_table(engine):
     query: str = """
     CREATE TABLE IF NOT EXISTS migrations (
         id uuid DEFAULT uuid_generate_v4() PRIMARY KEY, 
-        migration_name varchar(255) NOT NULL UNIQUE, created_at timestamp NOT NULL DEFAULT current_timestamp
+        migration_name varchar(255) NOT NULL UNIQUE,
+        created_at timestamp NOT NULL DEFAULT current_timestamp
     );
     """
     return create_db_table(engine, query)
