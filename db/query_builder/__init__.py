@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 class QueryBuilder:
     """
     Building SQL queries
+    Is not a real builder
     """
 
     db_engine: Engine
