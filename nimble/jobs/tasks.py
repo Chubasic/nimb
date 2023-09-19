@@ -1,17 +1,15 @@
 """
-Nimble domain tasks
+Nimble module tasks.
+Logs avaliable on debug mode
 """
-import datetime
+from typing import Dict
 from dataclasses import asdict
-
-from sqlalchemy import text
-from datetime import datetime
-from _celery import celery
 from celery import chain
+from _celery import celery
+from db import engine as db_engine
 from ..api.classes.request_params import RequestParams, SortOrder, SortField
 from ..api.classes.response import ResponseContacts
 from ..api.nimb import fetch
-from db import engine as db_engine
 from ..repo import Repository
 
 
@@ -45,21 +43,43 @@ def fetch_contacts():
 
 
 @celery.task
-def format_data(data):
+def format_data(data: Dict):
+    """
+    Format the given data by flattening it.
+
+    Args:
+        data (Dict): The data to be formatted.
+
+    Returns:
+        List[Dict]: The flattened data.
+    """
     print("Flattening data::", data)
-    flatten = list(map(lambda r: {**r.get('fields', {})}, data.get('resources')))
+    flatten = list(map(lambda r: {**r.get("fields", {})}, data.get("resources")))
     return flatten
 
 
 @celery.task
 def insert_data(flatten):
+    """
+    Inserts the given data into the "users" collection in the database.
+
+    Args:
+        flatten (bool): Whether to flatten the data before inserting it.
+    """
     print("Inserting...")
-    Repository(db_engine).insert(flatten)
+    Repository(db_engine, "users").insert(flatten)
     return print("Testing task:: 'fetch_contacts.insert_data'")
 
 
-@celery.task 
+@celery.task
 def error_handler(request, exc, traceback):
-    print('Task {0} raised exception: {1!r}\n{2!r}'.format(
-        request.id, exc, traceback))
-    
+    """
+    A Celery task function that handles errors raised during task execution.
+
+    Args:
+        request: The request object associated with the task.
+        exc: The exception that was raised during task execution.
+        traceback: The traceback information for the exception.
+    """
+    # pylint: disable=consider-using-f-string
+    print("Task {0} raised exception: {1!r}\n{2!r}".format(request.id, exc, traceback))

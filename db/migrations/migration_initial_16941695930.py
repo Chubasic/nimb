@@ -65,7 +65,9 @@ def create_user_table(engine: Engine):
 	        first_name varchar(45) NOT NULL, 
 	        last_name varchar(45) NOT NULL, 
 	        email varchar(254) NOT NULL UNIQUE, 
-	        description varchar(500)
+	        description varchar(500),
+	        created_at timestamp NOT NULL DEFAULT current_timestamp
+	        updated_at timestamp NOT NULL DEFAULT current_timestamp
         ); 
             """
     return create_db_table(engine, query)
@@ -160,7 +162,7 @@ if __name__ == "__main__":
         port=5432,
     )
     db_engine = create_engine(connction_url)
-    
+
     if db_engine:
         if not check_migration_exists(db_engine):
             try:

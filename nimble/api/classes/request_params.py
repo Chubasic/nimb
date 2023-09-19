@@ -1,7 +1,7 @@
 """ 
 Nimb API Request Params
 """
-from typing import List, Union, Optional, Literal, Tuple, LiteralString
+from typing import List, Union, Optional, Literal, Tuple
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 from utils.skip_none import dict_skip_none

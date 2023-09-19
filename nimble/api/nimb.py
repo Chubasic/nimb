@@ -14,7 +14,8 @@ from .classes.errors import (
     QuotaError,
     ServerError,
     Unauthorized,
-    Unsupported, NimbleError
+    Unsupported,
+    NimbleError,
 )
 from .classes.request_params import RequestParams
 from .classes.response import response_contacts_schema
@@ -27,21 +28,17 @@ DEFAULT_HEADERS = {
 
 
 def fetch(endpoint: str, params: RequestParams):
-    print(endpoint, params)
     """
     Get data from Nimb API
     """
-    print(BASE_URL)
     if BASE_URL:
         try:
             url = urljoin(BASE_URL, endpoint)
             print(url)
             response = requests.get(
                 url,
-                params=parse.urlencode(params.to_dict_safe(), safe=':,'),
-                headers={
-                    **DEFAULT_HEADERS
-                },
+                params=parse.urlencode(params.to_dict_safe(), safe=":,"),
+                headers={**DEFAULT_HEADERS},
                 timeout=10,
             )
             response.raise_for_status()
@@ -53,18 +50,18 @@ def fetch(endpoint: str, params: RequestParams):
         except requests.exceptions.RequestException as req_err:
             print(f"Unable fetch data from Nimb API, on route {endpoint}")
             if isinstance(req_err, Timeout):
-                return NimbleError.schema().load({
-                    'message': 'Service is unavaliable',
-                    'code': 0
-                })
+                return NimbleError.schema().load(
+                    {"message": "Service is unavaliable", "code": 0}
+                )
             print("Status code", req_err.response.status_code)
             error_body = req_err.response.json()
             match req_err.response.status_code:
                 case 404:
                     return NotFoundError.schema().load(error_body)
                 case 403 | 401:
+                    # pylint: disable=no-member
                     return Unauthorized.schema().load(error_body)
-            
+
             match error_body.get("code"):
                 case ValidationError.code:
                     return ValidationError.schema().load(error_body)
@@ -74,9 +71,7 @@ def fetch(endpoint: str, params: RequestParams):
 
                 case ServerError.code:
                     return ServerError.schema().load(error_body)
-                
+
                 case _:
                     print("Unsupported")
                     return Unsupported()
-
-            
