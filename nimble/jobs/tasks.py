@@ -6,11 +6,10 @@ from typing import Dict, List
 from dataclasses import asdict
 from celery import chain
 from _celery import celery
-from db import engine as db_engine
 from ..api.classes.request_params import RequestParams, SortOrder, SortField
 from ..api.classes.response import ResponseContacts
 from ..api.nimb import fetch
-from ..repo import Repository
+from ..repo.contact_repo import ContactRepo
 
 
 @celery.task
@@ -67,7 +66,7 @@ def insert_data(flatten: List[Dict]):
         flatten List[Dict]: Processed data to insert
     """
     print("Inserting...")
-    Repository(db_engine, "users").insert(flatten)
+    ContactRepo().insert(flatten)
     return print("Testing task:: 'fetch_contacts.insert_data'")
 
 

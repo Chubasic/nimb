@@ -12,6 +12,9 @@ from dataclasses_json import (
 
 # pylint disable=missing-function-docstring
 def default_factory():
+    """
+    Returns: List[dict]: Default values for fields.
+    """
     return [{"value": "No data"}]
 
 

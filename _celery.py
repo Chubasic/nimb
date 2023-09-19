@@ -12,11 +12,10 @@ celery = Celery(
     include=["nimble.jobs.tasks"],
 )
 
-
 celery.conf.beat_schedule = {
     "add-every-minute": {
         "task": "nimble.jobs.tasks.fetch_contacts",
-        "schedule": crontab(minute="* * * * *"),
+        "schedule": crontab(hour=7, minute=0),
         "options": {"link_error": signature("nimble.jobs.tasks.error_handler")},
     },
 }
