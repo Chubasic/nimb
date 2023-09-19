@@ -2,7 +2,7 @@
 Nimble module tasks.
 Logs avaliable on debug mode
 """
-from typing import Dict
+from typing import Dict, List
 from dataclasses import asdict
 from celery import chain
 from _celery import celery
@@ -59,12 +59,12 @@ def format_data(data: Dict):
 
 
 @celery.task
-def insert_data(flatten):
+def insert_data(flatten: List[Dict]):
     """
     Inserts the given data into the "users" collection in the database.
 
     Args:
-        flatten (bool): Whether to flatten the data before inserting it.
+        flatten List[Dict]: Processed data to insert
     """
     print("Inserting...")
     Repository(db_engine, "users").insert(flatten)

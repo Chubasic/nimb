@@ -53,7 +53,6 @@ def fetch(endpoint: str, params: RequestParams):
                 return NimbleError.schema().load(
                     {"message": "Service is unavaliable", "code": 0}
                 )
-            print("Status code", req_err.response.status_code)
             error_body = req_err.response.json()
             match req_err.response.status_code:
                 case 404:
