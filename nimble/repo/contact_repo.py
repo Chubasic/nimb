@@ -10,6 +10,7 @@ from db import engine as db_engine
 class ContactRepo(Repository):
     """
     Contact aka users repository, CRUD operations are (should be) implemented here
+    Performs operations on the database
     !NOT ALL METHODS ARE IMPLEMENTED!
     """
 

@@ -8,8 +8,8 @@ from db.query_builder import QueryBuilder
 
 class Repository(ABC):
     """
-    Nimble repository.
-    Performs operations on the database
+    Repository abs class, defines what kind of methods should.
+
     !NOT ALL FUNCTIONS ARE IMPLEMENTED!
     """
 
